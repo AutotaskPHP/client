@@ -31,6 +31,7 @@
         "phpunit/phpunit": "^9.5",
         "aidan-casey/mock-client": "dev-master",
         "laminas/laminas-diactoros": "^2.24",
-        "guzzlehttp/guzzle": "^7.5"
+        "guzzlehttp/guzzle": "^7.5",
+        "vimeo/psalm": "^5.6"
     }
 }

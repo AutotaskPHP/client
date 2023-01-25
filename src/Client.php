@@ -93,6 +93,10 @@ final class Client
             'Secret' => $this->secret,
         ]);
 
+        /**
+         * @var string $headerName
+         * @var array<array-key,string>|string $headerValue
+         */
         foreach ($headers as $headerName => $headerValue) {
             $request = $request->withHeader($headerName, $headerValue);
         }
