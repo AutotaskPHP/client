@@ -2,6 +2,8 @@
 
 namespace Autotask\Client;
 
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -24,21 +26,36 @@ final class Client
     private readonly string $integrationCode;
 
     public function __construct(
-        ClientInterface $client,
-        RequestFactoryInterface  $requestFactory,
-        StreamFactoryInterface $streamFactory,
         string $baseUri,
         string $username,
         string $secret,
-        string $integrationCode
+        string $integrationCode,
+        ?ClientInterface $client = null,
+        ?RequestFactoryInterface  $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null
     ) {
-        $this->client = $client;
-        $this->requestFactory = $requestFactory;
-        $this->streamFactory = $streamFactory;
-        $this->baseUri = rtrim($baseUri, '/');
+        $this->client = $client ?? Psr18ClientDiscovery::find();
+        $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
+        $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
+
+        $baseUri = strtolower(
+            rtrim($baseUri, '/')
+        );
+
+        if (! str_ends_with($baseUri, '/v1.0')) {
+            $baseUri .= '/v1.0';
+        }
+
+        $this->baseUri = $baseUri;
+
         $this->username = $username;
         $this->secret = $secret;
         $this->integrationCode = $integrationCode;
+    }
+
+    public function delete(string $endpoint): ResponseInterface
+    {
+        return $this->send(method: 'DELETE', endpoint: $endpoint);
     }
 
     /**
@@ -56,10 +73,34 @@ final class Client
     /**
      * @throws \Psr\Http\Client\ClientExceptionInterface
      */
+    public function patch(string $endpoint, ?string $body = null): ResponseInterface
+    {
+        return $this->send(
+            method: 'PATCH',
+            endpoint: $endpoint,
+            body: $body
+        );
+    }
+
+    /**
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function post(string $endpoint, ?string $body = null): ResponseInterface
     {
         return $this->send(
             method: 'POST',
+            endpoint: $endpoint,
+            body: $body
+        );
+    }
+
+    /**
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function put(string $endpoint, ?string $body = null): ResponseInterface
+    {
+        return $this->send(
+            method: 'PUT',
             endpoint: $endpoint,
             body: $body
         );

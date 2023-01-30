@@ -1,0 +1,14 @@
+{
+    "items": [
+        {
+            "id": 2,
+            "firstName": "Dwight",
+            "lastName": "Schrute"
+        }
+    ],
+    "pageDetails": {
+        "count": 1,
+        "nextPageUrl": null,
+        "prevPageUrl": "/Contacts/query"
+    }
+}
