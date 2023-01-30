@@ -1,0 +1,14 @@
+{
+    "items": [
+        {
+            "id": 1,
+            "firstName": "Jim",
+            "lastName": "Halpert"
+        }
+    ],
+    "pageDetails": {
+        "count": 1,
+        "nextPageUrl": "/Contacts/query?page=2",
+        "prevPageUrl": null
+    }
+}
