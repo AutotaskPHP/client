@@ -11,8 +11,9 @@ final class InvalidRequestException extends LogicException
      */
     public static function withErrors(array $errors): self
     {
-        $message = 'Invalid request. Received the following errors:' . PHP_EOL . PHP_EOL;
+        $message = 'Invalid request. Received the following errors:' . PHP_EOL;
         $message .= join(PHP_EOL, $errors);
+        $message .= PHP_EOL . PHP_EOL;
 
         return new self($message);
     }

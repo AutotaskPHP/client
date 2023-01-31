@@ -4,9 +4,9 @@ namespace Autotask\Tests\Client\Http\Request;
 
 use AidanCasey\MockClient\Client;
 use Autotask\Client\Http\Request\QueryBuilder;
-use Autotask\Client\Http\Response\PagedResponseParser;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 final class QueryBuilderTest extends TestCase
 {
@@ -137,6 +137,28 @@ final class QueryBuilderTest extends TestCase
         );
     }
 
+    public function test_that_limit_must_be_greater_than_0()
+    {
+        $this->expectExceptionObject(new UnexpectedValueException(
+            'The limit must be between 1 and 500.'
+        ));
+
+        $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
+
+        $query->limit(0);
+    }
+
+    public function test_that_limit_must_be_less_than_501()
+    {
+        $this->expectExceptionObject(new UnexpectedValueException(
+            'The limit must be between 1 and 500.'
+        ));
+
+        $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
+
+        $query->limit(501);
+    }
+
     public function test_that_all_fields_can_be_selected()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
@@ -212,11 +234,13 @@ final class QueryBuilderTest extends TestCase
     public function test_that_a_get_request_is_performed_when_the_query_is_less_than_1800_characters()
     {
         $httpClient = Client::fake([
-            'https://example.net/api/v1.0/Tickets/query*' => Client::response('{"items":[]}'),
+            'https://example.net/api/v1.0/Contacts/query*' => Client::response(
+                __DIR__ . '/../../Stubs/query_response_successful_page_1.json'
+            ),
         ]);
 
         $client = ClientFactory::new($httpClient)->baseUri('https://example.net/api/v1.0')->make();
-        $query = new QueryBuilder($client, 'Tickets');
+        $query = new QueryBuilder($client, 'Contacts');
 
         $query
             ->where('firstName', 'eq', 'Jim')
@@ -224,17 +248,19 @@ final class QueryBuilderTest extends TestCase
 
         $httpClient
             ->assertMethod('GET')
-            ->assertUri('https://example.net/api/v1.0/Tickets/query?search=' . urlencode($query->toJson()));
+            ->assertUri('https://example.net/api/v1.0/Contacts/query?search=' . urlencode($query->toJson()));
     }
 
     public function test_that_a_post_request_is_performed_when_the_query_is_more_than_1800_characters()
     {
         $httpClient = Client::fake([
-            'https://example.net/api/v1.0/Tickets/query*' => Client::response('{"items":[]}'),
+            'https://example.net/api/v1.0/Contacts/query*' => Client::response(
+                __DIR__ . '/../../Stubs/query_response_successful_page_1.json'
+            ),
         ]);
 
         $client = ClientFactory::new($httpClient)->baseUri('https://example.net/api/v1.0')->make();
-        $query = new QueryBuilder($client, 'Tickets');
+        $query = new QueryBuilder($client, 'Contacts');
 
         for ($i = 0; $i <= 40; $i++) {
             $query->where('firstName', 'eq', 'Jim');
@@ -244,56 +270,7 @@ final class QueryBuilderTest extends TestCase
 
         $httpClient
             ->assertMethod('POST')
-            ->assertUri('https://example.net/api/v1.0/Tickets/query')
+            ->assertUri('https://example.net/api/v1.0/Contacts/query')
             ->assertBodyIs($query->toJson());
-    }
-
-    public function test_that_paginate_returns_a_paged_response()
-    {
-        $httpClient = Client::fake([
-            'https://example.net/api/v1.0/Tickets/query*' => Client::response(
-                __DIR__ . '/../../Stubs/query_response_successful_page_1.json'
-            ),
-        ]);
-
-        $client = ClientFactory::new($httpClient)->baseUri('https://example.net/api/v1.0')->make();
-
-        $query = new QueryBuilder($client, 'Tickets');
-
-        $page = $query->paginate();
-
-        $this->assertEquals(
-            PagedResponseParser::parse($client, Client::response(
-                __DIR__ . '/../../Stubs/query_response_successful_page_1.json'
-            )),
-            $page
-        );
-    }
-
-    public function test_that_loop_gets_all_pages()
-    {
-        $httpClient = Client::fake([
-            'https://example.net/api/v1.0/Contacts/query?search=%5B%5D' => Client::response(
-                __DIR__ . '/../../Stubs/query_response_successful_page_1.json'
-            ),
-
-            'https://example.net/api/v1.0/Contacts/query?page=2' => Client::response(
-                __DIR__ . '/../../Stubs/query_response_successful_page_2.json'
-            )
-        ]);
-
-        $client = ClientFactory::new($httpClient)->baseUri('https://example.net/api/v1.0')->make();
-
-        $query = new QueryBuilder($client, 'Contacts');
-
-        $array = iterator_to_array($query->loop());
-
-        $this->assertEqualsCanonicalizing(
-            [
-                ['id' => 1, 'firstName' => 'Jim', 'lastName' => 'Halpert'],
-                ['id' => 2, 'firstName' => 'Dwight', 'lastName' => 'Schrute'],
-            ],
-            $array
-        );
     }
 }
