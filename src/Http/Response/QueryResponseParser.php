@@ -38,6 +38,12 @@ final class QueryResponseParser
             throw new UnexpectedResponseException('Expecting `pageDetails` key in response.');
         }
 
+        /**
+         * @var array{
+         *     items: array<array-key, array>,
+         *     pageDetails: array{count: int, nextPageUrl: null|string, prevPageUrl: null|string}
+         * } $json
+         */
         return $json;
     }
 }
