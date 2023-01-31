@@ -3,17 +3,14 @@
 namespace Autotask\Client\Http\Request;
 
 use Autotask\Client\Client;
-use Autotask\Client\Http\Paginator;
 use Autotask\Client\Http\Request\Constraints\Constraint;
 use Autotask\Client\Http\Request\Constraints\GroupConstraint;
 use Autotask\Client\Http\Request\Constraints\WhereConstraint;
 use Autotask\Client\Http\Request\Operators\GroupOperator;
 use Autotask\Client\Http\Request\Operators\WhereOperator;
-use Autotask\Client\Http\Response\PagedResponseParser;
 use Autotask\Client\Http\Response\QueryResponseParser;
-use Generator;
-use Illuminate\Support\Collection;
 use Psr\Http\Message\ResponseInterface;
+use UnexpectedValueException;
 
 final class QueryBuilder
 {
@@ -23,6 +20,7 @@ final class QueryBuilder
 
     private ?int $limit = null;
 
+    /** @var array<array-key, string> */
     private array $select = [];
 
     /** @var array<array-key,Constraint> $constraints */
@@ -81,7 +79,11 @@ final class QueryBuilder
 
     public function limit(int $limit): self
     {
-        $this->limit = $limit; // TODO : Validate?
+        if ($limit < 1 || $limit > 500) {
+            throw new UnexpectedValueException('The limit must be between 1 and 500.');
+        }
+
+        $this->limit = $limit;
 
         return $this;
     }
@@ -99,18 +101,23 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function first(): ?array
     {
-        /**
-         * @var array
-         */
-        return $this->limit(1)->get()->first();
+        return $this->limit(1)->get()['items'][0] ?? null;
     }
 
     /**
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @return array{
+     *     items: array<array-key, array>,
+     *     pageDetails: array{count: int, nextPageUrl: null|string, prevPageUrl: null|string}
+     * }
      */
-    public function get(): Collection
+    public function get(): array
     {
         $response = $this->performRequest();
 
@@ -118,32 +125,12 @@ final class QueryBuilder
     }
 
     /**
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @return array{
+     *     filter?: non-empty-array<array-key, array>,
+     *     MaxRecords?: int,
+     *     IncludeFields?: non-empty-array<array-key, string>
+     * }
      */
-    public function paginate(): Paginator
-    {
-        $response = $this->performRequest();
-
-        return PagedResponseParser::parse($this->client, $response);
-    }
-
-    public function loop(): Generator
-    {
-        $page = $this->paginate();
-
-        while (true) {
-            foreach ($page->items as $item) {
-                yield $item;
-            }
-
-            if (! $page->hasNextPage()) {
-                break;
-            }
-
-            $page = $page->nextPage();
-        }
-    }
-
     public function toArray(): array
     {
         $search = [];
