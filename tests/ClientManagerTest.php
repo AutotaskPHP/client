@@ -6,9 +6,15 @@ use Autotask\Client\ClientManager;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 
-class ClientManagerTest extends TestCase
+/**
+ * @internal
+ */
+final class ClientManagerTest extends TestCase
 {
-    public function test_that_clients_can_be_added_and_removed()
+    /**
+     * @test
+     */
+    public function that_clients_can_be_added_and_removed()
     {
         $client1 = ClientFactory::new()->make();
         $client2 = ClientFactory::new()->make();

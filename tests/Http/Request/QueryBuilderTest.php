@@ -8,9 +8,15 @@ use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 
+/**
+ * @internal
+ */
 final class QueryBuilderTest extends TestCase
 {
-    public function test_that_query_builder_can_be_made()
+    /**
+     * @test
+     */
+    public function that_query_builder_can_be_made()
     {
         $client = ClientFactory::new()->make();
 
@@ -19,7 +25,10 @@ final class QueryBuilderTest extends TestCase
         $this->assertEquals(new QueryBuilder($client, 'Contacts'), $builder);
     }
 
-    public function test_that_and_groups_are_applied()
+    /**
+     * @test
+     */
+    public function that_and_groups_are_applied()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -43,8 +52,8 @@ final class QueryBuilderTest extends TestCase
                                 'field' => 'lastName',
                                 'op' => 'eq',
                                 'value' => 'Halpert',
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -52,7 +61,10 @@ final class QueryBuilderTest extends TestCase
         );
     }
 
-    public function test_that_or_groups_are_applied()
+    /**
+     * @test
+     */
+    public function that_or_groups_are_applied()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -76,8 +88,8 @@ final class QueryBuilderTest extends TestCase
                                 'field' => 'firstName',
                                 'op' => 'eq',
                                 'value' => 'Pam',
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -85,7 +97,10 @@ final class QueryBuilderTest extends TestCase
         );
     }
 
-    public function test_that_where_constraints_are_applied()
+    /**
+     * @test
+     */
+    public function that_where_constraints_are_applied()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -105,7 +120,10 @@ final class QueryBuilderTest extends TestCase
         );
     }
 
-    public function test_that_where_udf_constraints_are_applied()
+    /**
+     * @test
+     */
+    public function that_where_udf_constraints_are_applied()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -126,18 +144,25 @@ final class QueryBuilderTest extends TestCase
         );
     }
 
-    public function test_that_limit_can_be_applied()
+    /**
+     * @test
+     */
+    public function that_limit_can_be_applied()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
         $query->limit(30);
 
         $this->assertEqualsCanonicalizing(
-            ['MaxRecords' => 30], $query->toArray()
+            ['MaxRecords' => 30],
+            $query->toArray()
         );
     }
 
-    public function test_that_limit_must_be_greater_than_0()
+    /**
+     * @test
+     */
+    public function that_limit_must_be_greater_than_0()
     {
         $this->expectExceptionObject(new UnexpectedValueException(
             'The limit must be between 1 and 500.'
@@ -148,7 +173,10 @@ final class QueryBuilderTest extends TestCase
         $query->limit(0);
     }
 
-    public function test_that_limit_must_be_less_than_501()
+    /**
+     * @test
+     */
+    public function that_limit_must_be_less_than_501()
     {
         $this->expectExceptionObject(new UnexpectedValueException(
             'The limit must be between 1 and 500.'
@@ -159,7 +187,10 @@ final class QueryBuilderTest extends TestCase
         $query->limit(501);
     }
 
-    public function test_that_all_fields_can_be_selected()
+    /**
+     * @test
+     */
+    public function that_all_fields_can_be_selected()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -168,7 +199,10 @@ final class QueryBuilderTest extends TestCase
         $this->assertEmpty($query->toArray());
     }
 
-    public function test_that_certain_fields_can_be_selected()
+    /**
+     * @test
+     */
+    public function that_certain_fields_can_be_selected()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -184,7 +218,10 @@ final class QueryBuilderTest extends TestCase
         );
     }
 
-    public function test_that_casting_query_builder_to_string_shows_json_in_pretty_format()
+    /**
+     * @test
+     */
+    public function that_casting_query_builder_to_string_shows_json_in_pretty_format()
     {
         $query = new QueryBuilder(ClientFactory::new()->make(), 'Tickets');
 
@@ -192,26 +229,29 @@ final class QueryBuilderTest extends TestCase
 
         $this->assertSame(
             expected: <<<JSON
-            {
-                "filter": [
-                    {
-                        "field": "email",
-                        "op": "contains",
-                        "value": "@theoffice.com"
-                    }
-                ]
-            }
-            JSON,
+                {
+                    "filter": [
+                        {
+                            "field": "email",
+                            "op": "contains",
+                            "value": "@theoffice.com"
+                        }
+                    ]
+                }
+                JSON,
             actual: $query->__toString()
         );
     }
 
-    public function test_that_first_entity_can_be_retrieved()
+    /**
+     * @test
+     */
+    public function that_first_entity_can_be_retrieved()
     {
         $httpClient = Client::fake([
             '*' => Client::response(
                 __DIR__ . '/../../Stubs/query_response_successful_page_1.json'
-            )
+            ),
         ]);
 
         $client = ClientFactory::new($httpClient)->baseUri('https://example.net/api/v1.0')->make();
@@ -231,7 +271,10 @@ final class QueryBuilderTest extends TestCase
             );
     }
 
-    public function test_that_a_get_request_is_performed_when_the_query_is_less_than_1800_characters()
+    /**
+     * @test
+     */
+    public function that_a_get_request_is_performed_when_the_query_is_less_than_1800_characters()
     {
         $httpClient = Client::fake([
             'https://example.net/api/v1.0/Contacts/query*' => Client::response(
@@ -251,7 +294,10 @@ final class QueryBuilderTest extends TestCase
             ->assertUri('https://example.net/api/v1.0/Contacts/query?search=' . urlencode($query->toJson()));
     }
 
-    public function test_that_a_post_request_is_performed_when_the_query_is_more_than_1800_characters()
+    /**
+     * @test
+     */
+    public function that_a_post_request_is_performed_when_the_query_is_more_than_1800_characters()
     {
         $httpClient = Client::fake([
             'https://example.net/api/v1.0/Contacts/query*' => Client::response(

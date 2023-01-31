@@ -15,7 +15,7 @@ final class ClientFactory
 
     public static function new(?ClientInterface $client = null): self
     {
-        $factory = new self;
+        $factory = new self();
 
         if ($client) {
             $factory->client($client);

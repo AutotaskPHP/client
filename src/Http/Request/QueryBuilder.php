@@ -137,7 +137,8 @@ final class QueryBuilder
 
         if ($this->constraints) {
             $search['filter'] = array_map(
-                fn (Constraint $constraint) => $constraint->toArray(), $this->constraints
+                fn (Constraint $constraint) => $constraint->toArray(),
+                $this->constraints
             );
         }
 

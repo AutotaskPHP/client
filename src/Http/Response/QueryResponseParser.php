@@ -9,7 +9,6 @@ use Psr\Http\Message\ResponseInterface;
 final class QueryResponseParser
 {
     /**
-     * @param ResponseInterface $response
      * @return array{
      *     items: array<array-key, array>,
      *     pageDetails: array{count: int, nextPageUrl: null|string, prevPageUrl: null|string}

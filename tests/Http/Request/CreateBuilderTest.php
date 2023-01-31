@@ -7,9 +7,15 @@ use Autotask\Client\Http\Request\CreateBuilder;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 
-class CreateBuilderTest extends TestCase
+/**
+ * @internal
+ */
+final class CreateBuilderTest extends TestCase
 {
-    public function test_that_create_builder_is_made()
+    /**
+     * @test
+     */
+    public function that_create_builder_is_made()
     {
         $client = ClientFactory::new()->make();
 
@@ -18,10 +24,13 @@ class CreateBuilderTest extends TestCase
         $this->assertEquals(new CreateBuilder($client, 'Tickets'), $builder);
     }
 
-    public function test_that_create_request_is_sent()
+    /**
+     * @test
+     */
+    public function that_create_request_is_sent()
     {
         $httpClient = Client::fake([
-            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json')
+            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json'),
         ]);
 
         $client = ClientFactory::new($httpClient)
