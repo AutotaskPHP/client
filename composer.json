@@ -26,7 +26,6 @@
         "psr/http-client-implementation": "^1.0",
         "psr/http-message-implementation": "^1.0",
         "psr/http-factory-implementation": "^1.0",
-        "illuminate/collections": "^9.48",
         "php-http/discovery": "^1.14"
     },
     "require-dev": {
@@ -35,7 +34,8 @@
         "laminas/laminas-diactoros": "^2.24",
         "guzzlehttp/guzzle": "^7.5",
         "vimeo/psalm": "5.6.0",
-        "nikic/php-parser": "^v4.13.2"
+        "nikic/php-parser": "^v4.13.2",
+        "friendsofphp/php-cs-fixer": "^v3.14.3"
     },
     "scripts": {
         "coverage": "vendor/bin/phpunit --coverage-html ./build/coverage",

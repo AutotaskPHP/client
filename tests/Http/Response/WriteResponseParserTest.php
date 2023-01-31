@@ -8,9 +8,15 @@ use Autotask\Client\Http\Response\Exception\UnexpectedResponseException;
 use Autotask\Client\Http\Response\WriteResponseParser;
 use PHPUnit\Framework\TestCase;
 
-class WriteResponseParserTest extends TestCase
+/**
+ * @internal
+ */
+final class WriteResponseParserTest extends TestCase
 {
-    public function test_that_an_exception_is_thrown_when_errors_are_present()
+    /**
+     * @test
+     */
+    public function that_an_exception_is_thrown_when_errors_are_present()
     {
         $this->expectExceptionObject(InvalidRequestException::withErrors([
             'Some error 1.',
@@ -22,7 +28,10 @@ class WriteResponseParserTest extends TestCase
         );
     }
 
-    public function test_that_an_exception_is_thrown_when_the_item_id_key_is_not_present()
+    /**
+     * @test
+     */
+    public function that_an_exception_is_thrown_when_the_item_id_key_is_not_present()
     {
         $this->expectExceptionObject(new UnexpectedResponseException(
             'Expecting `itemId` key in response.'
@@ -33,7 +42,10 @@ class WriteResponseParserTest extends TestCase
         );
     }
 
-    public function test_that_item_id_is_returned()
+    /**
+     * @test
+     */
+    public function that_item_id_is_returned()
     {
         $itemId = WriteResponseParser::parse(
             Client::response(__DIR__ . '/../../Stubs/write_response_successful.json')

@@ -7,9 +7,15 @@ use Autotask\Client\Http\Request\UpdateBuilder;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 
-class UpdateBuilderTest extends TestCase
+/**
+ * @internal
+ */
+final class UpdateBuilderTest extends TestCase
 {
-    public function test_that_update_builder_is_made()
+    /**
+     * @test
+     */
+    public function that_update_builder_is_made()
     {
         $client = ClientFactory::new()->make();
 
@@ -18,10 +24,13 @@ class UpdateBuilderTest extends TestCase
         $this->assertEquals(new UpdateBuilder($client, 'Tickets'), $builder);
     }
 
-    public function test_that_patch_request_is_sent()
+    /**
+     * @test
+     */
+    public function that_patch_request_is_sent()
     {
         $httpClient = Client::fake([
-            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json')
+            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json'),
         ]);
 
         $client = ClientFactory::new($httpClient)
@@ -39,10 +48,13 @@ class UpdateBuilderTest extends TestCase
             ->assertBodyIs('{"ticketNumber":"BCD123"}');
     }
 
-    public function test_that_put_request_is_sent()
+    /**
+     * @test
+     */
+    public function that_put_request_is_sent()
     {
         $httpClient = Client::fake([
-            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json')
+            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json'),
         ]);
 
         $client = ClientFactory::new($httpClient)

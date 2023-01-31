@@ -3,15 +3,19 @@
 namespace Autotask\Tests\Client\Http\Request;
 
 use AidanCasey\MockClient\Client;
-use Autotask\Client\Http\Request\CreateBuilder;
-use Autotask\Client\Http\Request\DeleteBuilder;
 use Autotask\Client\Http\Request\FindBuilder;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 
-class FindBuilderTest extends TestCase
+/**
+ * @internal
+ */
+final class FindBuilderTest extends TestCase
 {
-    public function test_that_find_builder_is_made()
+    /**
+     * @test
+     */
+    public function that_find_builder_is_made()
     {
         $client = ClientFactory::new()->make();
 
@@ -20,10 +24,13 @@ class FindBuilderTest extends TestCase
         $this->assertEquals(new FindBuilder($client, 'Tickets'), $builder);
     }
 
-    public function test_that_find_request_is_sent()
+    /**
+     * @test
+     */
+    public function that_find_request_is_sent()
     {
         $httpClient = Client::fake([
-            '*' => Client::response(__DIR__ . '/../../Stubs/find_response_successful.json')
+            '*' => Client::response(__DIR__ . '/../../Stubs/find_response_successful.json'),
         ]);
 
         $client = ClientFactory::new($httpClient)

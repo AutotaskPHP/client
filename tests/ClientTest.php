@@ -6,11 +6,17 @@ use AidanCasey\MockClient\Client as MockClient;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 
-class ClientTest extends TestCase
+/**
+ * @internal
+ */
+final class ClientTest extends TestCase
 {
-    public function test_that_api_version_is_appended_if_not_present()
+    /**
+     * @test
+     */
+    public function that_api_version_is_appended_if_not_present()
     {
-        $httpClient = new MockClient;
+        $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)
             ->baseUri('https://autotask.example.net')
             ->make();
@@ -21,9 +27,12 @@ class ClientTest extends TestCase
             ->assertUri('https://autotask.example.net/v1.0/Tickets');
     }
 
-    public function test_that_api_version_is_not_appended_if_present()
+    /**
+     * @test
+     */
+    public function that_api_version_is_not_appended_if_present()
     {
-        $httpClient = new MockClient;
+        $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)
             ->baseUri('https://autotask.example.net/v1.0/')
             ->make();
@@ -34,9 +43,12 @@ class ClientTest extends TestCase
             ->assertUri('https://autotask.example.net/v1.0/Tickets');
     }
 
-    public function test_that_shorthand_delete_method_makes_delete_request()
+    /**
+     * @test
+     */
+    public function that_shorthand_delete_method_makes_delete_request()
     {
-        $httpClient = new MockClient;
+        $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)->make();
 
         $client->delete('Tickets');
@@ -44,7 +56,10 @@ class ClientTest extends TestCase
         $httpClient->assertMethod('DELETE');
     }
 
-    public function test_that_shorthand_get_method_makes_get_request()
+    /**
+     * @test
+     */
+    public function that_shorthand_get_method_makes_get_request()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)
@@ -61,7 +76,10 @@ class ClientTest extends TestCase
             ->assertUri('https://autotask.example.net/v1.0/tickets?firstName=Jim&lastName=Halpert');
     }
 
-    public function test_that_shorthand_patch_method_makes_patch_request()
+    /**
+     * @test
+     */
+    public function that_shorthand_patch_method_makes_patch_request()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)->make();
@@ -76,7 +94,10 @@ class ClientTest extends TestCase
             ->assertBodyIs('{"id":1,"firstName":"Jim"}');
     }
 
-    public function test_that_shorthand_post_method_makes_post_request()
+    /**
+     * @test
+     */
+    public function that_shorthand_post_method_makes_post_request()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)->make();
@@ -92,7 +113,10 @@ class ClientTest extends TestCase
             ->assertBodyIs('{"id":1,"firstName":"Jim","lastName":"Halpert"}');
     }
 
-    public function test_that_shorthand_put_method_makes_put_request()
+    /**
+     * @test
+     */
+    public function that_shorthand_put_method_makes_put_request()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)->make();
@@ -108,7 +132,10 @@ class ClientTest extends TestCase
             ->assertBodyIs('{"id":1,"firstName":"Jim","lastName":"Lars"}');
     }
 
-    public function test_that_headers_are_set()
+    /**
+     * @test
+     */
+    public function that_headers_are_set()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)
@@ -129,7 +156,10 @@ class ClientTest extends TestCase
             ->assertHeaderEquals('Secret', 'Abc123');
     }
 
-    public function test_that_query_parameters_are_added()
+    /**
+     * @test
+     */
+    public function that_query_parameters_are_added()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)
@@ -146,7 +176,10 @@ class ClientTest extends TestCase
             ->assertUri('https://autotask.example.net/v1.0/Tickets/query?param1=param1Value&param2=param2Value');
     }
 
-    public function test_that_body_is_streamed()
+    /**
+     * @test
+     */
+    public function that_body_is_streamed()
     {
         $httpClient = new MockClient();
         $client = ClientFactory::new($httpClient)->make();

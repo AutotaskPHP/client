@@ -7,9 +7,15 @@ use Autotask\Client\Http\Request\DeleteBuilder;
 use Autotask\Tests\Client\Factory\ClientFactory;
 use PHPUnit\Framework\TestCase;
 
-class DeleteBuilderTest extends TestCase
+/**
+ * @internal
+ */
+final class DeleteBuilderTest extends TestCase
 {
-    public function test_that_delete_builder_is_made()
+    /**
+     * @test
+     */
+    public function that_delete_builder_is_made()
     {
         $client = ClientFactory::new()->make();
 
@@ -18,10 +24,13 @@ class DeleteBuilderTest extends TestCase
         $this->assertEquals(new DeleteBuilder($client, 'Tickets'), $builder);
     }
 
-    public function test_that_delete_request_is_sent()
+    /**
+     * @test
+     */
+    public function that_delete_request_is_sent()
     {
         $httpClient = Client::fake([
-            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json')
+            '*' => Client::response(__DIR__ . '/../../Stubs/write_response_successful.json'),
         ]);
 
         $client = ClientFactory::new($httpClient)
